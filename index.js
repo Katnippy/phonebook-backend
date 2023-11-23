@@ -35,6 +35,11 @@ let entries = [
     "name": "Eiscue",
     "number": "07850490004",
     "id": 7
+  },
+  {
+    "name": "Test",
+    "number": "999",
+    "id": 8
   }
 ];
 
@@ -64,6 +69,13 @@ app.get('/api/entries/:id', (request, response) => {
   } else {
     response.status(404).end();
   }
+});
+
+app.delete('/api/entries/:id', (request, response) => {
+  const id = Number(request.params.id);
+  entries = entries.filter((entry) => entry.id != id);
+
+  response.status(204).end();
 });
 
 const PORT = 3001;
