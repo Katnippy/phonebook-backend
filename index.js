@@ -44,6 +44,10 @@ app.get('/', (request, response) => {
   response.send('<h1>Hello, world!</h1>');
 });
 
+app.get('/api/entries', (request, response) => {
+  response.json(entries);
+});
+
 const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
