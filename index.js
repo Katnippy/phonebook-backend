@@ -35,15 +35,11 @@ let entries = [
     "name": "Eiscue",
     "number": "07850490004",
     "id": 7
-  },
-  {
-    "name": "Test",
-    "number": "999",
-    "id": 8
   }
 ];
 
 const app = express();
+app.use(express.json());
 
 app.get('/', (request, response) => {
   response.send('<h1>Hello, world!</h1>');
@@ -76,6 +72,29 @@ app.delete('/api/entries/:id', (request, response) => {
   entries = entries.filter((entry) => entry.id != id);
 
   response.status(204).end();
+});
+
+function generateID() {
+  const maxID = entries.length > 0 ? Math.max(...entries.map((e) => e.id)) : 0;
+
+  return maxID + 1;
+}
+
+app.post('/api/entries', (request, response) => {
+  const body = request.body;
+  if (!body.name || !body.number) {
+    return response.status(400).json({
+      error: 'Content missing'
+    });
+  }
+
+  const entry = {
+    name: body.name,
+    number: body.number,
+    id: generateID()
+  };
+  entries = entries.concat(entry);
+  response.json(entry);
 });
 
 const PORT = 3001;
