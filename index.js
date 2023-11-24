@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import morgan from 'morgan';
 import chalk from 'chalk';
 
@@ -41,6 +42,8 @@ let entries = [
 ];
 
 const app = express();
+app.use(express.static('dist'));
+app.use(cors());
 app.use(express.json());
 
 morgan.token('body', (request) => JSON.stringify(request.body));
@@ -90,7 +93,6 @@ app.post('/api/entries', (request, response) => {
   };
   entries = entries.concat(entry);
   response.json(entry);
-  morgan()
 });
 
 // GET
@@ -129,7 +131,7 @@ app.delete('/api/entries/:id', (request, response) => {
 });
 
 // Run server.
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
