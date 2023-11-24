@@ -1,4 +1,6 @@
 import express from 'express';
+import morgan from 'morgan';
+import chalk from 'chalk';
 
 let entries = [
   {
@@ -41,6 +43,18 @@ let entries = [
 const app = express();
 app.use(express.json());
 
+morgan.token('body', (request) => JSON.stringify(request.body));
+app.use(morgan((tokens, request, response) => {
+  return [
+    chalk.green.bold(tokens.method(request, response)),
+    tokens.body(request) != '{}' ? tokens.body(request) : '',
+    chalk.cyan(tokens.url(request, response)),
+    chalk.yellow.bold(tokens.status(request, response)),
+    tokens.res(request, response, 'content-length'), '-',
+    'took', tokens['response-time'](request, response), 'ms'
+  ].join(' ');
+}));
+
 // POST
 function generateID() {
   const maxID = entries.length > 0 ? Math.max(...entries.map((e) => e.id)) : 0;
@@ -66,7 +80,7 @@ app.post('/api/entries', (request, response) => {
   } else if (entries.some((entry) => entry.name === body.name)) {
     return response.status(409).json({
       error: 'Entry already exists with that name'
-    });  
+    });
   }
 
   const entry = {
@@ -76,6 +90,7 @@ app.post('/api/entries', (request, response) => {
   };
   entries = entries.concat(entry);
   response.json(entry);
+  morgan()
 });
 
 // GET
