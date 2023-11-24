@@ -82,10 +82,23 @@ function generateID() {
 
 app.post('/api/entries', (request, response) => {
   const body = request.body;
-  if (!body.name || !body.number) {
+  // ? Refactor?
+  if (!body.name && !body.number) {
     return response.status(400).json({
-      error: 'Content missing'
+      error: 'Name & number missing'
     });
+  } else if (!body.name) {
+    return response.status(400).json({
+      error: 'Name missing'
+    });
+  } else if (!body.number) {
+    return response.status(400).json({
+      error: 'Number missing'
+    });
+  } else if (entries.some((entry) => entry.name === body.name)) {
+    return response.status(409).json({
+      error: 'Entry already exists with that name'
+    });  
   }
 
   const entry = {
