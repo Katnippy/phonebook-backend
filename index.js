@@ -41,39 +41,7 @@ let entries = [
 const app = express();
 app.use(express.json());
 
-app.get('/', (request, response) => {
-  response.send('<h1>Hello, world!</h1>');
-});
-
-app.get('/api/entries', (request, response) => {
-  response.json(entries);
-});
-
-app.get('/info', (request, response) => {
-  const date = new Date();
-  response.send(`
-    <p>Phonebook has info for ${entries.length} people</p>
-    <p>${date}</p>
-  `);
-});
-
-app.get('/api/entries/:id', (request, response) => {
-  const id = Number(request.params.id);
-  const entry = entries.find((entry) => entry.id === id);
-  if (entry) {
-    response.json(entry);
-  } else {
-    response.status(404).end();
-  }
-});
-
-app.delete('/api/entries/:id', (request, response) => {
-  const id = Number(request.params.id);
-  entries = entries.filter((entry) => entry.id != id);
-
-  response.status(204).end();
-});
-
+// POST
 function generateID() {
   const maxID = entries.length > 0 ? Math.max(...entries.map((e) => e.id)) : 0;
 
@@ -110,6 +78,42 @@ app.post('/api/entries', (request, response) => {
   response.json(entry);
 });
 
+// GET
+app.get('/', (request, response) => {
+  response.send('<h1>Hello, world!</h1>');
+});
+
+app.get('/api/entries', (request, response) => {
+  response.json(entries);
+});
+
+app.get('/info', (request, response) => {
+  const date = new Date();
+  response.send(`
+    <p>Phonebook has info for ${entries.length} people</p>
+    <p>${date}</p>
+  `);
+});
+
+app.get('/api/entries/:id', (request, response) => {
+  const id = Number(request.params.id);
+  const entry = entries.find((entry) => entry.id === id);
+  if (entry) {
+    response.json(entry);
+  } else {
+    response.status(404).end();
+  }
+});
+
+// DELETE
+app.delete('/api/entries/:id', (request, response) => {
+  const id = Number(request.params.id);
+  entries = entries.filter((entry) => entry.id != id);
+
+  response.status(204).end();
+});
+
+// Run server.
 const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
