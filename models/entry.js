@@ -8,7 +8,7 @@ const url = process.env.MONGODB_URI;
 const firstIndex = url.indexOf(':', url.indexOf(':') + 1);
 const secondIndex = url.indexOf('@');
 const password = url.slice(firstIndex + 1, secondIndex);
-const censoredUrl = url.replace(password, '*'.repeat(password.length));
+const censoredUrl = url.replace(password, '********');
 console.log(`Connecting to ${censoredUrl}...`);
 
 mongoose.connect(url)
