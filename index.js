@@ -2,44 +2,46 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import chalk from 'chalk';
+import 'dotenv/config';
+import Entry from './models/entry.js';
 
-let entries = [
-  {
-    "name": "Pingu",
-    "number": "02086876000",
-    "id": 1
-  },
-  {
-    "name": "Piplup",
-    "number": "07066775792",
-    "id": 2
-  },
-  {
-    "name": "Wheezy",
-    "number": "07830494624",
-    "id": 3
-  },
-  {
-    "name": "Tuxedosam",
-    "number": "07750295291",
-    "id": 4
-  },
-  {
-    "name": "Tux",
-    "number": "07027167775",
-    "id": 5
-  },
-  {
-    "name": "Pinga",
-    "number": "07034452515",
-    "id": 6
-  },
-  {
-    "name": "Eiscue",
-    "number": "07850490004",
-    "id": 7
-  }
-];
+// let entries = [
+//   {
+//     "name": "Pingu",
+//     "number": "02086876000",
+//     "id": 1
+//   },
+//   {
+//     "name": "Piplup",
+//     "number": "07066775792",
+//     "id": 2
+//   },
+//   {
+//     "name": "Wheezy",
+//     "number": "07830494624",
+//     "id": 3
+//   },
+//   {
+//     "name": "Tuxedosam",
+//     "number": "07750295291",
+//     "id": 4
+//   },
+//   {
+//     "name": "Tux",
+//     "number": "07027167775",
+//     "id": 5
+//   },
+//   {
+//     "name": "Pinga",
+//     "number": "07034452515",
+//     "id": 6
+//   },
+//   {
+//     "name": "Eiscue",
+//     "number": "07850490004",
+//     "id": 7
+//   }
+// ];
 
 const app = express();
 app.use(express.static('dist'));
@@ -101,7 +103,7 @@ app.get('/', (request, response) => {
 });
 
 app.get('/api/entries', (request, response) => {
-  response.json(entries);
+  Entry.find({}).then((entries) => response.json(entries));
 });
 
 app.get('/info', (request, response) => {
@@ -113,13 +115,7 @@ app.get('/info', (request, response) => {
 });
 
 app.get('/api/entries/:id', (request, response) => {
-  const id = Number(request.params.id);
-  const entry = entries.find((entry) => entry.id === id);
-  if (entry) {
-    response.json(entry);
-  } else {
-    response.status(404).end();
-  }
+  Entry.findById(request.params.id).then((entry) => response.json(entry));
 });
 
 // DELETE
@@ -131,7 +127,7 @@ app.delete('/api/entries/:id', (request, response) => {
 });
 
 // Run server.
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
