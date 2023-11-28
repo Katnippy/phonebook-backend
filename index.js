@@ -65,17 +65,11 @@ app.post('/api/entries', (request, response) => {
   const body = request.body;
   // ? Refactor?
   if (!body.name && !body.number) {
-    return response.status(400).json({
-      error: 'Name & number missing'
-    });
+    return response.status(400).json({ error: 'Name & number missing' });
   } else if (!body.name) {
-    return response.status(400).json({
-      error: 'Name missing'
-    });
+    return response.status(400).json({ error: 'Name missing' });
   } else if (!body.number) {
-    return response.status(400).json({
-      error: 'Number missing'
-    });
+    return response.status(400).json({ error: 'Number missing' });
   // } else if (entries.some((entry) => entry.name === body.name)) {
   //   return response.status(409).json({
   //     error: 'Entry already exists with that name'
@@ -111,6 +105,8 @@ app.get('/api/entries/:id', (request, response) => {
   Entry.findById(request.params.id).then((entry) => response.json(entry));
 });
 
+// TODO: Add unknownEndpoint() middleware.
+
 // DELETE
 app.delete('/api/entries/:id', (request, response) => {
   const id = Number(request.params.id);
@@ -118,6 +114,13 @@ app.delete('/api/entries/:id', (request, response) => {
 
   response.status(204).end();
 });
+
+// Unknown endpoint handler
+function unknownEndpoint(request, response) {
+  return response.status(404).send({ error: 'Unknown endpoint' });
+}
+
+app.use(unknownEndpoint);
 
 // Run server.
 const PORT = process.env.PORT;
