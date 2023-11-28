@@ -101,11 +101,17 @@ app.get('/info', (request, response) => {
   `);
 });
 
-app.get('/api/entries/:id', (request, response) => {
-  Entry.findById(request.params.id).then((entry) => response.json(entry));
+app.get('/api/entries/:id', (request, response, next) => {
+  Entry.findById(request.params.id)
+    .then((entry) => {
+      if (entry) {
+        response.json(entry);
+      } else {
+        response.status(404).end();
+      }
+    })
+    .catch((error) => next(error));
 });
-
-// TODO: Add unknownEndpoint() middleware.
 
 // DELETE
 app.delete('/api/entries/:id', (request, response) => {
@@ -121,6 +127,19 @@ function unknownEndpoint(request, response) {
 }
 
 app.use(unknownEndpoint);
+
+// Error handler
+function errorHandler(error, request, response, next) {
+  console.error(error.message);
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'Malformatted ID' });
+  } else {
+    next(error);
+  }
+}
+
+app.use(errorHandler);
 
 // Run server.
 const PORT = process.env.PORT;
