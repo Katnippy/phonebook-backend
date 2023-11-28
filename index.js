@@ -61,12 +61,6 @@ app.use(morgan((tokens, request, response) => {
 }));
 
 // POST
-function generateID() {
-  const maxID = entries.length > 0 ? Math.max(...entries.map((e) => e.id)) : 0;
-
-  return maxID + 1;
-}
-
 app.post('/api/entries', (request, response) => {
   const body = request.body;
   // ? Refactor?
@@ -82,19 +76,17 @@ app.post('/api/entries', (request, response) => {
     return response.status(400).json({
       error: 'Number missing'
     });
-  } else if (entries.some((entry) => entry.name === body.name)) {
-    return response.status(409).json({
-      error: 'Entry already exists with that name'
-    });
+  // } else if (entries.some((entry) => entry.name === body.name)) {
+  //   return response.status(409).json({
+  //     error: 'Entry already exists with that name'
+  //   });
   }
 
-  const entry = {
+  const entry = new Entry({
     name: body.name,
     number: body.number,
-    id: generateID()
-  };
-  entries = entries.concat(entry);
-  response.json(entry);
+  });
+  entry.save().then((savedEntry) => response.json(savedEntry));
 });
 
 // GET
@@ -106,6 +98,7 @@ app.get('/api/entries', (request, response) => {
   Entry.find({}).then((entries) => response.json(entries));
 });
 
+// ! Broken.
 app.get('/info', (request, response) => {
   const date = new Date();
   response.send(`
