@@ -114,11 +114,18 @@ app.get('/api/entries/:id', (request, response, next) => {
 });
 
 // DELETE
-app.delete('/api/entries/:id', (request, response) => {
-  const id = Number(request.params.id);
-  entries = entries.filter((entry) => entry.id != id);
-
-  response.status(204).end();
+app.delete('/api/entries/:id', (request, response, next) => {
+  Entry.findByIdAndDelete(request.params.id)
+    .then((result) => {
+      if (result) {
+        response.status(204).end();
+      } else {
+        response.status(404).send({ 
+          error: 'Resource already deleted or doesn\'t exist' 
+        });
+      }
+    })
+    .catch((error) => next(error));
 });
 
 // Unknown endpoint handler
