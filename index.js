@@ -113,6 +113,18 @@ app.get('/api/entries/:id', (request, response, next) => {
     .catch((error) => next(error));
 });
 
+// PUT
+app.put('/api/entries/:id', (request, response, next) => {
+  const body = request.body;
+  const entry = {
+    name: body.name,
+    number: body.number,
+  };
+  Entry.findByIdAndUpdate(request.params.id, entry, { new: true })
+    .then((updatedEntry) => response.json(updatedEntry))
+    .catch((error) => next(error));
+});
+
 // DELETE
 app.delete('/api/entries/:id', (request, response, next) => {
   Entry.findByIdAndDelete(request.params.id)
