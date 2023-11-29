@@ -61,26 +61,26 @@ app.use(morgan((tokens, request, response) => {
 }));
 
 // POST
-app.post('/api/entries', (request, response) => {
+app.post('/api/entries', (request, response, next) => {
   const body = request.body;
-  // ? Refactor?
-  if (!body.name && !body.number) {
-    return response.status(400).json({ error: 'Name & number missing' });
-  } else if (!body.name) {
-    return response.status(400).json({ error: 'Name missing' });
-  } else if (!body.number) {
-    return response.status(400).json({ error: 'Number missing' });
+  // if (!body.name && !body.number) {
+  //   return response.status(400).json({ error: 'Name & number missing' });
+  // } else if (!body.name) {
+  //   return response.status(400).json({ error: 'Name missing' });
+  // } else if (!body.number) {
+  //   return response.status(400).json({ error: 'Number missing' });
   // } else if (entries.some((entry) => entry.name === body.name)) {
   //   return response.status(409).json({
   //     error: 'Entry already exists with that name'
   //   });
-  }
-
+  // }
   const entry = new Entry({
     name: body.name,
     number: body.number,
   });
-  entry.save().then((savedEntry) => response.json(savedEntry));
+  entry.save()
+    .then((savedEntry) => response.json(savedEntry))
+    .catch((error) => next(error));
 });
 
 // GET
@@ -116,12 +116,12 @@ app.get('/api/entries/:id', (request, response, next) => {
 
 // PUT
 app.put('/api/entries/:id', (request, response, next) => {
-  const body = request.body;
-  const entry = {
-    name: body.name,
-    number: body.number,
-  };
-  Entry.findByIdAndUpdate(request.params.id, entry, { new: true })
+  const { name, number } = request.body;
+  Entry.findByIdAndUpdate(
+    request.params.id,
+    { name, number },
+    { new: true, runValidators: true, context: 'query' }
+  )
     .then((updatedEntry) => response.json(updatedEntry))
     .catch((error) => next(error));
 });
@@ -154,6 +154,8 @@ function errorHandler(error, request, response, next) {
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'Malformatted ID' });
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).send({ error: error.message });
   } else {
     next(error);
   }

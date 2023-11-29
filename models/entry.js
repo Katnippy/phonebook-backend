@@ -18,8 +18,16 @@ mongoose.connect(url)
   ));
 
 const entrySchema = new mongoose.Schema({
-  name: String,
-  number: String,
+  name: {
+    type: String,
+    minLength: 2,
+    required: true
+  },
+  number: {
+    type: String,
+    minLength: 11,
+    required: true
+  },
 });
 entrySchema.set('toJSON', {
   transform: (document, returnedObject) => {
