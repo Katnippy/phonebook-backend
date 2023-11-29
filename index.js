@@ -52,7 +52,7 @@ morgan.token('body', (request) => JSON.stringify(request.body));
 app.use(morgan((tokens, request, response) => {
   return [
     chalk.green.bold(tokens.method(request, response)),
-    tokens.body(request) != '{}' ? tokens.body(request) : '',
+    tokens.body(request) !== '{}' ? tokens.body(request) : '',
     chalk.cyan(tokens.url(request, response)),
     chalk.yellow.bold(tokens.status(request, response)),
     tokens.res(request, response, 'content-length'), '-',
@@ -133,8 +133,8 @@ app.delete('/api/entries/:id', (request, response, next) => {
       if (result) {
         response.status(204).end();
       } else {
-        response.status(404).send({ 
-          error: 'Resource already deleted or doesn\'t exist' 
+        response.status(404).send({
+          error: 'Resource already deleted or doesn\'t exist'
         });
       }
     })

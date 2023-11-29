@@ -12,7 +12,7 @@ const censoredUrl = url.replace(password, '********');
 console.log(`Connecting to ${censoredUrl}...`);
 
 mongoose.connect(url)
-  .then((result) => console.log('Connected to database.'))
+  .then(() => console.log('Connected to database.'))
   .catch((error) => console.log(
     `Error connecting to database: ${error.message}`
   ));
@@ -29,7 +29,7 @@ const entrySchema = new mongoose.Schema({
       validator: function(v) {
         return /^0\d{9,10}$/.test(v);
       },
-      message: props => `${props.value} isn't a valid UK phone number.`
+      message: (props) => `${props.value} isn't a valid UK phone number.`
     },
     required: [true, 'Name and number are both required.']
   },
