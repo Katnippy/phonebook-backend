@@ -92,13 +92,14 @@ app.get('/api/entries', (request, response) => {
   Entry.find({}).then((entries) => response.json(entries));
 });
 
-// ! Broken.
 app.get('/info', (request, response) => {
-  const date = new Date();
-  response.send(`
-    <p>Phonebook has info for ${entries.length} people</p>
-    <p>${date}</p>
-  `);
+  Entry.find({}).then((entries) => {
+    return (
+      response.send(`
+        <p>Phonebook has info for ${entries.length} people</p>
+        <p>${Date()}</p>
+    `));
+  });
 });
 
 app.get('/api/entries/:id', (request, response, next) => {
