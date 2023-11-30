@@ -2,8 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import chalk from 'chalk';
-import 'dotenv/config';
+
 import Entry from './models/entry.js';
+import config from './utils/config.js';
+import logger from './utils/logger.js';
 
 // let entries = [
 //   {
@@ -150,7 +152,7 @@ app.use(unknownEndpoint);
 
 // Error handler
 function errorHandler(error, request, response, next) {
-  console.error(error.message);
+  logger.error(error.message);
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'Malformatted ID' });
@@ -164,7 +166,6 @@ function errorHandler(error, request, response, next) {
 app.use(errorHandler);
 
 // Run server.
-const PORT = process.env.PORT;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(config.PORT, () => {
+  logger.info(`Server running on port ${config.PORT}`);
 });

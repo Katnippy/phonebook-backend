@@ -1,19 +1,22 @@
 import mongoose from 'mongoose';
 
+import config from './../utils/config.js';
+import logger from './../utils/logger.js';
+
 mongoose.set('strictQuery', false);
 
-const url = process.env.MONGODB_URI;
+const url = config.MONGODB_URI;
 // Replaces password in URL with asterisks.
 // ? Make function?
 const firstIndex = url.indexOf(':', url.indexOf(':') + 1);
 const secondIndex = url.indexOf('@');
 const password = url.slice(firstIndex + 1, secondIndex);
 const censoredUrl = url.replace(password, '********');
-console.log(`Connecting to ${censoredUrl}...`);
+logger.info(`Connecting to ${censoredUrl}...`);
 
 mongoose.connect(url)
-  .then(() => console.log('Connected to database.'))
-  .catch((error) => console.log(
+  .then(() => logger.info('Connected to database.'))
+  .catch((error) => logger.info(
     `Error connecting to database: ${error.message}`
   ));
 
@@ -21,7 +24,7 @@ const entrySchema = new mongoose.Schema({
   name: {
     type: String,
     minLength: 2,
-    required: [true, 'Name and number are both required.'] // ? Disable frontend validation?
+    required: [true, 'Name and number are both required.']
   },
   number: {
     type: String,
