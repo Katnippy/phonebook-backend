@@ -17,26 +17,17 @@ entriesRouter.post('/', (request, response, next) => {
 });
 
 // GET
-// ! Won't work.
-// app.get('/', (request, response) => {
-//   response.send('<h1>Hello, world!</h1>');
-// });
-
 entriesRouter.get('/', (request, response) => {
   Entry.find({}).then((entries) => response.json(entries));
 });
 
-// TODO: Make this a JSON response instead.
-// ! Won't work.
-// app.get('/info', (request, response) => {
-//   Entry.find({}).then((entries) => {
-//     return (
-//       response.send(`
-//         <p>Phonebook has info for ${entries.length} people</p>
-//         <p>${Date()}</p>
-//     `));
-//   });
-// });
+entriesRouter.get('/info', (request, response) => {
+  Entry.find({}).then((entries) => {
+    return (
+      response.json({ entries: entries.length, date: Date() })
+    );
+  });
+});
 
 entriesRouter.get('/:id', (request, response, next) => {
   Entry.findById(request.params.id)
