@@ -1,5 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import 'express-async-errors';
 import cors from 'cors';
 import morgan from 'morgan';
 import chalk from 'chalk';
@@ -15,19 +16,18 @@ const app = express();
 mongoose.set('strictQuery', false);
 
 const url = config.MONGODB_URI;
-// Replaces password in URL with asterisks.
 // ? Make function?
+// Replaces password in URL with asterisks.
 const firstIndex = url.indexOf(':', url.indexOf(':') + 1);
 const secondIndex = url.indexOf('@');
 const password = url.slice(firstIndex + 1, secondIndex);
 const censoredUrl = url.replace(password, '********');
 logger.info(`Connecting to ${censoredUrl}...`);
 
-mongoose.connect(url)
-  .then(() => logger.info('Connected to database.'))
-  .catch((error) => logger.info(
-    `Error connecting to database: ${error.message}`
-  ));
+(async function connectToDb() {
+  await mongoose.connect(url)
+    .then(() => logger.info('Connected to database.'));
+})();
 
 // Initialise app.
 app.use(express.static('dist'));
