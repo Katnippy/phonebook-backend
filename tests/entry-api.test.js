@@ -9,10 +9,10 @@ const api = supertest(app);
 
 beforeEach(async () => {
   await Entry.deleteMany({});
-  let entryObject = new Entry(helper.initialEntries[0]);
-  await entryObject.save();
-  entryObject = new Entry(helper.initialEntries[1]);
-  await entryObject.save();
+
+  const entryObjects = helper.initialEntries.map((entry) => new Entry(entry));
+  const promiseArray = entryObjects.map((entry) => entry.save());
+  await Promise.all(promiseArray);
 });
 
 // POST
