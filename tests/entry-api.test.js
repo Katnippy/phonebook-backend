@@ -35,6 +35,42 @@ describe('POST', () => {
     expect(response.body).toHaveLength(initialEntries.length + 1);
     expect(contents).toContain('Piplup');
   });
+
+  test('An entry without a name won\'t be added', async () => {
+    const newEntry = { number: '07053245899' };
+    await api
+      .post('/api/entries')
+      .send(newEntry)
+      .expect(400);
+
+    const response = await api.get('/api/entries');
+
+    expect(response.body).toHaveLength(initialEntries.length);
+  });
+
+  test('An entry without a number won\'t be added', async () => {
+    const newEntry = { name: 'Mumble' };
+    await api
+      .post('/api/entries')
+      .send(newEntry)
+      .expect(400);
+
+    const response = await api.get('/api/entries');
+
+    expect(response.body).toHaveLength(initialEntries.length);
+  });
+
+  test('An empty entry won\'t be added', async () => {
+    const newEntry = { };
+    await api
+      .post('/api/entries')
+      .send(newEntry)
+      .expect(400);
+
+    const response = await api.get('/api/entries');
+
+    expect(response.body).toHaveLength(initialEntries.length);
+  });
 });
 
 // GET
