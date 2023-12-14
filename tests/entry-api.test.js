@@ -3,19 +3,15 @@ import supertest from 'supertest';
 import mongoose from 'mongoose';
 
 import Entry from '../models/entry.js';
+import helper from './test-helper.js';
 
 const api = supertest(app);
 
-const initialEntries = [
-  { name: 'Pingu', number: '07822850998' },
-  { name: 'Pinga', number: '07705362453' },
-];
-
 beforeEach(async () => {
   await Entry.deleteMany({});
-  let entryObject = new Entry(initialEntries[0]);
+  let entryObject = new Entry(helper.initialEntries[0]);
   await entryObject.save();
-  entryObject = new Entry(initialEntries[1]);
+  entryObject = new Entry(helper.initialEntries[1]);
   await entryObject.save();
 });
 
@@ -29,10 +25,10 @@ describe('POST', () => {
       .expect(201)
       .expect('Content-Type', /application\/json/);
 
-    const response = await api.get('/api/entries');
-    const contents = response.body.map((r) => r.name);
+    const entriesAtEnd = await helper.jsonEntriesInDb();
+    expect(entriesAtEnd).toHaveLength(helper.initialEntries.length + 1);
 
-    expect(response.body).toHaveLength(initialEntries.length + 1);
+    const contents = entriesAtEnd.map((e) => e.name);
     expect(contents).toContain('Piplup');
   });
 
@@ -43,9 +39,8 @@ describe('POST', () => {
       .send(newEntry)
       .expect(400);
 
-    const response = await api.get('/api/entries');
-
-    expect(response.body).toHaveLength(initialEntries.length);
+    const entriesAtEnd = await helper.jsonEntriesInDb();
+    expect(entriesAtEnd).toHaveLength(helper.initialEntries.length);
   });
 
   test('An entry without a number won\'t be added', async () => {
@@ -55,9 +50,8 @@ describe('POST', () => {
       .send(newEntry)
       .expect(400);
 
-    const response = await api.get('/api/entries');
-
-    expect(response.body).toHaveLength(initialEntries.length);
+    const entriesAtEnd = await helper.jsonEntriesInDb();
+    expect(entriesAtEnd).toHaveLength(helper.initialEntries.length);
   });
 
   test('An empty entry won\'t be added', async () => {
@@ -67,9 +61,8 @@ describe('POST', () => {
       .send(newEntry)
       .expect(400);
 
-    const response = await api.get('/api/entries');
-
-    expect(response.body).toHaveLength(initialEntries.length);
+    const entriesAtEnd = await helper.jsonEntriesInDb();
+    expect(entriesAtEnd).toHaveLength(helper.initialEntries.length);
   });
 });
 
@@ -85,7 +78,7 @@ describe('GET', () => {
   test('There are 2 entries', async () => {
     const response = await api.get('/api/entries');
 
-    expect(response.body).toHaveLength(initialEntries.length);
+    expect(response.body).toHaveLength(helper.initialEntries.length);
   });
 
   test('The first entry is Pingu\'s', async () => {
