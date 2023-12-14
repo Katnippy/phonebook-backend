@@ -19,24 +19,45 @@ beforeEach(async () => {
   await entryObject.save();
 });
 
-test('Entries are returned as JSON', async () => {
-  await api
-    .get('/api/entries')
-    .expect(200)
-    .expect('Content-Type', /application\/json/);
+// POST
+describe('POST', () => {
+  test('A valid entry can be added', async () => {
+    const newEntry = { name: 'Piplup', number: '07784495747' };
+    await api
+      .post('/api/entries')
+      .send(newEntry)
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+
+    const response = await api.get('/api/entries');
+    const contents = response.body.map((r) => r.name);
+
+    expect(response.body).toHaveLength(initialEntries.length + 1);
+    expect(contents).toContain('Piplup');
+  });
 });
 
-test('There are 2 entries', async () => {
-  const response = await api.get('/api/entries');
+// GET
+describe('GET', () => {
+  test('Entries are returned as JSON', async () => {
+    await api
+      .get('/api/entries')
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+  });
 
-  expect(response.body).toHaveLength(initialEntries.length);
-});
+  test('There are 2 entries', async () => {
+    const response = await api.get('/api/entries');
 
-test('The first entry is Pingu\'s', async () => {
-  const response = await api.get('/api/entries');
-  const contents = response.body.map((r) => r.name);
+    expect(response.body).toHaveLength(initialEntries.length);
+  });
 
-  expect(contents).toContain('Pingu');
+  test('The first entry is Pingu\'s', async () => {
+    const response = await api.get('/api/entries');
+    const contents = response.body.map((r) => r.name);
+
+    expect(contents).toContain('Pingu');
+  });
 });
 
 afterAll(async () => {
