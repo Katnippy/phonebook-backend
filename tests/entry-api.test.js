@@ -87,6 +87,35 @@ describe('GET', () => {
 
     expect(contents).toContain('Pingu');
   });
+
+
+  test('A specific entry can be viewed', async () => {
+    const entriesAtStart = await helper.jsonEntriesInDb();
+    const entryToView = entriesAtStart[1];
+
+    const resultEntry = await api
+      .get(`/api/entries/${entryToView.id}`)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    expect(resultEntry.body).toEqual(entryToView);
+  });
+});
+
+// DELETE
+describe('DELETE', () => {
+  test('A specific entry can be deleted', async () => {
+    const entriesAtStart = await helper.jsonEntriesInDb();
+    const entryToDelete = entriesAtStart[1];
+
+    await api
+      .delete(`/api/entries/${entryToDelete.id}`)
+      .expect(204);
+
+    const entriesAtEnd = await helper.jsonEntriesInDb();
+
+    expect(entriesAtEnd).toHaveLength(entriesAtStart.length - 1);
+  });
 });
 
 afterAll(async () => {
