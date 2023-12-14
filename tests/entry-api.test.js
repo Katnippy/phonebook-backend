@@ -102,6 +102,25 @@ describe('GET', () => {
   });
 });
 
+// PUT
+describe('PUT', () => {
+  test('A specific entry can be updated', async () => {
+    const entriesAtStart = await helper.jsonEntriesInDb();
+    const entryToUpdate = entriesAtStart[1];
+    entryToUpdate.number = '07939017775';
+
+    await api
+      .put(`/api/entries/${entryToUpdate.id}`)
+      .send(entryToUpdate)
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    const entriesAtEnd = await helper.jsonEntriesInDb();
+    expect(entriesAtEnd).toHaveLength(entriesAtStart.length);
+    expect(entriesAtEnd[1].number).toEqual(entryToUpdate.number);
+  });
+});
+
 // DELETE
 describe('DELETE', () => {
   test('A specific entry can be deleted', async () => {
