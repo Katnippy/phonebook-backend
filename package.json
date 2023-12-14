@@ -1,13 +1,13 @@
 {
-  "name": "phonebook-backend",
-  "version": "0.0.1",
+  "name": "yellow-penguins-backend",
+  "version": "0.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:ui": "rm -rf dist && cd ../phonebook-frontend && npm run build && cp -r dist ../phonebook-backend",
+    "build:ui": "rm -rf dist && cd ../yellow-penguins-frontend && npm run build && cp -r dist ../yellow-penguins-backend",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push origin main",
     "lint": "eslint ."
   },
