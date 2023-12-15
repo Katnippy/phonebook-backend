@@ -1,0 +1,29 @@
+@import "https://fonts.googleapis.com/css?family=Inter";
+html,
+body {
+  background-color: #ffff99;
+  font-family: "Inter", "Arial", "Helvetica", "sans-serif";
+}
+
+#yellow-penguins {
+  width: min(10%, 70px);
+  margin-right: 1rem;
+}
+
+@media (min-width: 1024px) {
+  #yellow-penguins {
+    margin-right: 1.5rem;
+  }
+}
+#search-box {
+  width: 31%;
+}
+
+@media (min-width: 1024px) {
+  #search-box {
+    width: 32%;
+  }
+}
+#add-button {
+  margin-top: 2rem;
+}/*# sourceMappingURL=style.css.map */
