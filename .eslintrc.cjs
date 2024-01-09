@@ -1,11 +1,15 @@
 module.exports = {
   'env': {
     'browser': true,
-    'es2021': true,
+    'es6': true,
     'node': true,
     'jest': true,
   },
-  'extends': 'eslint:recommended',
+  'extends': [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/recommended-requiring-type-checking',
+  ],
   'overrides': [
     {
       'env': {
@@ -20,7 +24,8 @@ module.exports = {
     }
   ],
   plugins: [
-    '@stylistic'
+    '@stylistic',
+    '@typescript-eslint',
   ],
   'parserOptions': {
     'ecmaVersion': 'latest',
@@ -54,6 +59,17 @@ module.exports = {
       { 'before': true, 'after': true }
     ],
     'no-console': 0,
-    '@stylistic/arrow-parens': 'error'
+    '@stylistic/arrow-parens': 'error',
+    '@typescript-eslint/semi': ['error'],
+    '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/restrict-template-expressions': 'off',
+    '@typescript-eslint/restrict-plus-operands': 'off',
+    '@typescript-eslint/no-unsafe-member-access': 'off',
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      { 'argsIgnorePattern': '^_' }
+    ],
+    'no-case-declarations': 'off',
   }
 };
